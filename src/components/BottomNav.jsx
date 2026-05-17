@@ -1,4 +1,4 @@
-export default function BottomNav({ activeTab, onTabChange, onReport }) {
+export default function BottomNav({ activeTab, onTabChange, onReport, user }) {
   return (
     <nav className="bottom-nav">
       <button
@@ -19,6 +19,14 @@ export default function BottomNav({ activeTab, onTabChange, onReport }) {
       >
         <span className="nav-icon">🏆</span>
         <span className="nav-label">Badges</span>
+      </button>
+
+      <button
+        className={`nav-item ${activeTab === 'profil' ? 'active' : ''}`}
+        onClick={() => onTabChange('profil')}
+      >
+        <span className="nav-icon">{user ? '👤' : '🔑'}</span>
+        <span className="nav-label">{user ? 'Profil' : 'Connexion'}</span>
       </button>
     </nav>
   )

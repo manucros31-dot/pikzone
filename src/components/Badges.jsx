@@ -37,7 +37,7 @@ function ProgressBar({ value, max, color }) {
   )
 }
 
-export default function Badges({ reportCount }) {
+export default function Badges({ reportCount, user, onSignup }) {
   return (
     <div className="badges-page">
       <div className="badges-header">
@@ -46,7 +46,19 @@ export default function Badges({ reportCount }) {
         <p className="badges-count">
           <strong>{reportCount}</strong> signalement{reportCount !== 1 ? 's' : ''}
         </p>
+        {!user && (
+          <p className="badges-anon-note">
+            Progression locale — non sauvegardée
+          </p>
+        )}
       </div>
+
+      {!user && (
+        <div className="badges-save-cta">
+          <p>Créez un compte pour sauvegarder vos badges et suivre votre impact !</p>
+          <button className="cta-btn" onClick={onSignup}>S'inscrire gratuitement</button>
+        </div>
+      )}
 
       <div className="badges-list">
         {BADGES.map((badge) => {
@@ -63,14 +75,8 @@ export default function Badges({ reportCount }) {
                 <p className="badge-desc">{badge.desc}</p>
                 {!unlocked && (
                   <>
-                    <ProgressBar
-                      value={reportCount}
-                      max={badge.threshold}
-                      color={badge.color}
-                    />
-                    <p className="badge-progress">
-                      {reportCount}/{badge.threshold}
-                    </p>
+                    <ProgressBar value={reportCount} max={badge.threshold} color={badge.color} />
+                    <p className="badge-progress">{reportCount}/{badge.threshold}</p>
                   </>
                 )}
               </div>
