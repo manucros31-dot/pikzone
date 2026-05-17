@@ -7,6 +7,7 @@ import AuthModal from './components/AuthModal'
 import Profile from './components/Profile'
 import PlanModal from './components/PlanModal'
 import { supabase, getUserId } from './lib/supabase'
+import InstallBanner from './components/InstallBanner'
 import { NIVEAU_SCORE, haversineM, scoreToLabel, scoreToColor } from './lib/geo'
 import useGeolocation from './hooks/useGeolocation'
 import useAuth from './hooks/useAuth'
@@ -202,6 +203,7 @@ export default function App() {
       )}
 
       <BottomNav activeTab={activeTab} onTabChange={handleTabChange} onReport={() => setShowModal(true)} user={user} />
+      <InstallBanner />
     </div>
   )
 }
