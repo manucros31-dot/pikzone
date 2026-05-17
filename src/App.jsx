@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import Map from './components/Map'
 import ReportModal from './components/ReportModal'
 import Badges from './components/Badges'
@@ -12,19 +12,11 @@ import useAuth from './hooks/useAuth'
 import './App.css'
 
 function ContestDisclaimer({ onDone, onCancel }) {
-  const DURATION = 5000
-  const timerRef = useRef(null)
-
-  useEffect(() => {
-    timerRef.current = setTimeout(onDone, DURATION)
-    return () => clearTimeout(timerRef.current)
-  }, [onDone])
-
   return (
-    <div className="disclaimer-overlay" onClick={onDone}>
-      <div className="disclaimer-box" onClick={(e) => e.stopPropagation()}>
+    <div className="disclaimer-overlay">
+      <div className="disclaimer-box">
         <p className="disclaimer-text">
-          Les informations affichées sur MoustiqueMap sont exclusivement issues de
+          Les informations affichées sur PICZONE sont exclusivement issues de
           signalements volontaires de la communauté d'utilisateurs. Elles reflètent
           un ressenti subjectif à un instant donné et ne constituent en aucun cas
           une expertise scientifique, sanitaire ou commerciale.{' '}
@@ -32,9 +24,6 @@ function ContestDisclaimer({ onDone, onCancel }) {
           décisions prises sur la base de ces informations. Toute donnée peut être
           contestée via le bouton "Contester".
         </p>
-        <div className="disclaimer-progress">
-          <div className="disclaimer-progress-fill" style={{ animationDuration: `${DURATION}ms` }} />
-        </div>
         <div className="disclaimer-actions">
           <button className="cancel-btn" onClick={onCancel}>Annuler</button>
           <button className="submit-btn" style={{ flex: 1 }} onClick={onDone}>

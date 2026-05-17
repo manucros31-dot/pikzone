@@ -10,7 +10,7 @@ export default function PrivacyPolicy({ onClose }) {
 
         <section className="privacy-section">
           <h2>1. Qui sommes-nous ?</h2>
-          <p>MoustiqueMap est une application collaborative de signalement de moustiques. Elle est développée à titre personnel et non commercial.</p>
+          <p>PICZONE est une application collaborative de signalement de moustiques. Elle est développée à titre personnel et non commercial.</p>
         </section>
 
         <section className="privacy-section">

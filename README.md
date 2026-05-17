@@ -1,4 +1,4 @@
-# MoustiqueMap 🦟
+# PICZONE 🦟
 
 Application mobile React de signalement de moustiques en temps réel, construite avec Vite, Leaflet et Supabase.
 
@@ -30,7 +30,7 @@ Application mobile React de signalement de moustiques en temps réel, construite
 ```bash
 # Cloner le projet
 git clone <url-du-repo>
-cd moustique-map
+cd piczone
 
 # Installer les dépendances
 npm install

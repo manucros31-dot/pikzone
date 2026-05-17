@@ -877,27 +877,6 @@
   text-align: justify;
 }
 
-.disclaimer-progress {
-  height: 4px;
-  background: #e5e7eb;
-  border-radius: 2px;
-  overflow: hidden;
-}
-
-.disclaimer-progress-fill {
-  height: 100%;
-  width: 100%;
-  background: #16a34a;
-  border-radius: 2px;
-  transform-origin: left;
-  animation: shrink linear forwards;
-}
-
-@keyframes shrink {
-  from { transform: scaleX(1); }
-  to   { transform: scaleX(0); }
-}
-
 .disclaimer-actions {
   display: flex;
   gap: 10px;

@@ -115,7 +115,7 @@ export default function ContestModal({ zone, onClose, onSuccess }) {
           </div>
 
           <p className="contest-disclaimer">
-            Les informations de MoustiqueMap sont issues de la communauté.
+            Les informations de PICZONE sont issues de la communauté.
             Toute contestation est examinée sous 72h.
           </p>
 
