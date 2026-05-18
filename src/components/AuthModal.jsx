@@ -16,6 +16,8 @@ function translateAuthError(message) {
     return 'Adresse email invalide.'
   if (message.includes('Email rate limit exceeded'))
     return 'Trop d\'emails envoyés. Réessayez plus tard.'
+  if (message.includes('row-level security') || message.includes('violates row-level'))
+    return 'Erreur lors de la création du profil. Veuillez réessayer.'
   return message
 }
 
