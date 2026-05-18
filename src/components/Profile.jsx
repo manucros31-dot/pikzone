@@ -112,7 +112,8 @@ const TIPS = [
 // ─── Composant ────────────────────────────────────────────────────────────────
 
 export default function Profile({ user, profile, reportCount }) {
-  const [stats, setStats] = useState(null)
+  const [stats, setStats]           = useState(null)
+  const [statsLoading, setStatsLoading] = useState(false)
 
   useEffect(() => {
     if (!user) return
@@ -120,69 +121,85 @@ export default function Profile({ user, profile, reportCount }) {
   }, [user?.id, reportCount])
 
   async function fetchStats() {
-    // 1. Premier signalement (date d'inscription effective)
-    const { data: firstData } = await supabase
-      .from('signalements')
-      .select('created_at')
-      .eq('auth_user_id', user.id)
-      .order('created_at', { ascending: true })
-      .limit(1)
+    setStatsLoading(true)
+    try {
+      // 1. Premier signalement
+      const { data: firstData } = await supabase
+        .from('signalements')
+        .select('created_at')
+        .eq('auth_user_id', user.id)
+        .order('created_at', { ascending: true })
+        .limit(1)
 
-    // 2. Tous les signalements pour les zones distinctes
-    const { data: allReports } = await supabase
-      .from('signalements')
-      .select('latitude, longitude')
-      .eq('auth_user_id', user.id)
+      // 2. Tous les signalements pour les zones distinctes
+      const { data: allReports } = await supabase
+        .from('signalements')
+        .select('latitude, longitude')
+        .eq('auth_user_id', user.id)
 
-    // 3. Signalements ce mois-ci
-    const startOfMonth = new Date()
-    startOfMonth.setDate(1); startOfMonth.setHours(0, 0, 0, 0)
-    const { count: monthCount } = await supabase
-      .from('signalements')
-      .select('*', { count: 'exact', head: true })
-      .eq('auth_user_id', user.id)
-      .gte('created_at', startOfMonth.toISOString())
+      // 3. Signalements ce mois-ci
+      const startOfMonth = new Date()
+      startOfMonth.setDate(1); startOfMonth.setHours(0, 0, 0, 0)
+      const { count: monthCount } = await supabase
+        .from('signalements')
+        .select('*', { count: 'exact', head: true })
+        .eq('auth_user_id', user.id)
+        .gte('created_at', startOfMonth.toISOString())
 
-    // 4. Temps total depuis les sessions
-    const { data: sessionData } = await supabase
-      .from('sessions')
-      .select('duration_minutes')
-      .eq('user_id', user.id)
-    const totalMinutes = (sessionData ?? []).reduce((s, r) => s + (r.duration_minutes ?? 0), 0)
+      // 4. Temps total depuis les sessions
+      const { data: sessionData } = await supabase
+        .from('sessions')
+        .select('duration_minutes')
+        .eq('user_id', user.id)
+      const totalMinutes = (sessionData ?? []).reduce((s, r) => s + (r.duration_minutes ?? 0), 0)
 
-    // 5. Classement communauté (tous les auth_user_ids avec leurs comptes)
-    const { data: rankData } = await supabase
-      .from('signalements')
-      .select('auth_user_id')
-      .not('auth_user_id', 'is', null)
+      // 5. Classement communauté
+      const { data: rankData } = await supabase
+        .from('signalements')
+        .select('auth_user_id')
+        .not('auth_user_id', 'is', null)
 
-    let ranking = null
-    if (rankData) {
-      const counts = {}
-      for (const r of rankData) counts[r.auth_user_id] = (counts[r.auth_user_id] ?? 0) + 1
-      const allCounts = Object.values(counts)
-      const total = allCounts.length
-      if (total > 0) {
-        const withMore = allCounts.filter(c => c > reportCount).length
-        const pct = Math.round((withMore / total) * 100)
-        ranking = pct === 0 ? 'Top 1% 🏆' : `Top ${pct + 1}%`
+      let ranking = null
+      if (rankData) {
+        const counts = {}
+        for (const r of rankData) counts[r.auth_user_id] = (counts[r.auth_user_id] ?? 0) + 1
+        const allCounts = Object.values(counts)
+        const total = allCounts.length
+        if (total > 0) {
+          const withMore = allCounts.filter(c => c > reportCount).length
+          const pct = Math.round((withMore / total) * 100)
+          ranking = pct === 0 ? 'Top 1% 🏆' : `Top ${pct + 1}%`
+        }
       }
-    }
 
-    setStats({
-      firstReport: firstData?.[0]?.created_at ?? null,
-      totalMinutes,
-      distinctZones: countDistinctZones(allReports ?? []),
-      monthCount: monthCount ?? 0,
-      ranking,
-    })
+      setStats({
+        firstReport:   firstData?.[0]?.created_at ?? null,
+        totalMinutes,
+        distinctZones: countDistinctZones(allReports ?? []),
+        monthCount:    monthCount ?? 0,
+        ranking,
+      })
+    } catch (err) {
+      console.error('fetchStats error', err)
+    } finally {
+      setStatsLoading(false)
+    }
   }
 
   async function handleLogout() {
     await supabase.auth.signOut()
   }
 
-  if (!user || !profile) return null
+  // Chargement du profil en cours
+  if (!user) return null
+  if (!profile) {
+    return (
+      <div className="profile-page" style={{ alignItems: 'center', justifyContent: 'center' }}>
+        <span style={{ fontSize: 36 }}>🦟</span>
+        <p style={{ color: '#6b7280', marginTop: 12 }}>Chargement du profil…</p>
+      </div>
+    )
+  }
 
   const badge    = currentBadge(reportCount)
   const progress = getProgress(reportCount)
@@ -222,40 +239,20 @@ export default function Profile({ user, profile, reportCount }) {
           {/* Statistiques */}
           <h3 className="prof-section-title">Mes statistiques</h3>
           <div className="prof-stats-grid">
-            <div className="prof-stat-card">
-              <span className="prof-stat-icon">🦟</span>
-              <span className="prof-stat-value">{reportCount}</span>
-              <span className="prof-stat-label">signalements</span>
-            </div>
-            <div className="prof-stat-card">
-              <span className="prof-stat-icon">📆</span>
-              <span className="prof-stat-value">{stats?.monthCount ?? '—'}</span>
-              <span className="prof-stat-label">ce mois-ci</span>
-            </div>
-            <div className="prof-stat-card">
-              <span className="prof-stat-icon">📍</span>
-              <span className="prof-stat-value">{stats?.distinctZones ?? '—'}</span>
-              <span className="prof-stat-label">zones</span>
-            </div>
-            <div className="prof-stat-card">
-              <span className="prof-stat-icon">⏱️</span>
-              <span className="prof-stat-value">{stats ? formatTime(stats.totalMinutes) : '—'}</span>
-              <span className="prof-stat-label">sur l'app</span>
-            </div>
-            <div className="prof-stat-card">
-              <span className="prof-stat-icon">📅</span>
-              <span className="prof-stat-value">
-                {stats?.firstReport
-                  ? new Date(stats.firstReport).toLocaleDateString('fr-FR', { month: 'short', year: 'numeric' })
-                  : '—'}
-              </span>
-              <span className="prof-stat-label">membre depuis</span>
-            </div>
-            <div className="prof-stat-card">
-              <span className="prof-stat-icon">🏆</span>
-              <span className="prof-stat-value">{stats?.ranking ?? '—'}</span>
-              <span className="prof-stat-label">classement</span>
-            </div>
+            {[
+              { icon: '🦟', value: reportCount,                                                             label: 'signalements' },
+              { icon: '📆', value: statsLoading ? '…' : (stats?.monthCount ?? 0),                          label: 'ce mois-ci' },
+              { icon: '📍', value: statsLoading ? '…' : (stats?.distinctZones ?? 0),                       label: 'zones' },
+              { icon: '⏱️', value: statsLoading ? '…' : formatTime(stats?.totalMinutes ?? 0),              label: "sur l'app" },
+              { icon: '📅', value: statsLoading ? '…' : (stats?.firstReport ? new Date(stats.firstReport).toLocaleDateString('fr-FR', { month: 'short', year: 'numeric' }) : '—'), label: 'membre depuis' },
+              { icon: '🏆', value: statsLoading ? '…' : (stats?.ranking ?? '—'),                           label: 'classement' },
+            ].map(({ icon, value, label }) => (
+              <div key={label} className="prof-stat-card">
+                <span className="prof-stat-icon">{icon}</span>
+                <span className="prof-stat-value">{value}</span>
+                <span className="prof-stat-label">{label}</span>
+              </div>
+            ))}
           </div>
         </div>
 
