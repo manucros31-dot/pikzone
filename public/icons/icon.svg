@@ -1,4 +1,63 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="80" fill="#1E6B2E"/>
-  <text x="256" y="330" font-size="280" text-anchor="middle" dominant-baseline="middle">🦟</text>
+
+  <!-- Fond vert arrondi -->
+  <rect width="512" height="512" rx="110" fill="#1E6B2E"/>
+
+  <!-- ═══ AILES (derrière le corps) ═══ -->
+  <!-- Aile avant gauche -->
+  <ellipse cx="172" cy="178" rx="88" ry="28" fill="rgba(255,255,255,0.50)" transform="rotate(-38,172,178)"/>
+  <!-- Aile arrière gauche -->
+  <ellipse cx="183" cy="220" rx="66" ry="21" fill="rgba(255,255,255,0.35)" transform="rotate(-18,183,220)"/>
+  <!-- Aile avant droite -->
+  <ellipse cx="340" cy="178" rx="88" ry="28" fill="rgba(255,255,255,0.50)" transform="rotate(38,340,178)"/>
+  <!-- Aile arrière droite -->
+  <ellipse cx="329" cy="220" rx="66" ry="21" fill="rgba(255,255,255,0.35)" transform="rotate(18,329,220)"/>
+
+  <!-- ═══ PATTES (6 pattes depuis le thorax) ═══ -->
+  <!-- Gauche avant -->
+  <path d="M 222,188 Q 155,162 108,128" stroke="white" stroke-width="5.5" fill="none" stroke-linecap="round"/>
+  <!-- Gauche milieu -->
+  <path d="M 212,205 Q 145,212  90,222" stroke="white" stroke-width="5.5" fill="none" stroke-linecap="round"/>
+  <!-- Gauche arrière -->
+  <path d="M 218,228 Q 152,258 108,300" stroke="white" stroke-width="5.5" fill="none" stroke-linecap="round"/>
+  <!-- Droite avant -->
+  <path d="M 290,188 Q 357,162 404,128" stroke="white" stroke-width="5.5" fill="none" stroke-linecap="round"/>
+  <!-- Droite milieu -->
+  <path d="M 300,205 Q 367,212 422,222" stroke="white" stroke-width="5.5" fill="none" stroke-linecap="round"/>
+  <!-- Droite arrière -->
+  <path d="M 294,228 Q 360,258 404,300" stroke="white" stroke-width="5.5" fill="none" stroke-linecap="round"/>
+
+  <!-- ═══ ABDOMEN (segments arrondis, effilé) ═══ -->
+  <path d="M 224,220 Q 198,295 210,368 Q 234,405 256,406 Q 278,405 302,368 Q 314,295 288,220 Z" fill="white"/>
+  <!-- Segments de l'abdomen -->
+  <line x1="210" y1="268" x2="302" y2="268" stroke="#1E6B2E" stroke-width="3" opacity="0.4"/>
+  <line x1="206" y1="308" x2="306" y2="308" stroke="#1E6B2E" stroke-width="3" opacity="0.4"/>
+  <line x1="208" y1="346" x2="304" y2="346" stroke="#1E6B2E" stroke-width="3" opacity="0.4"/>
+
+  <!-- ═══ THORAX (bosse caractéristique) ═══ -->
+  <ellipse cx="256" cy="200" rx="50" ry="44" fill="white"/>
+
+  <!-- ═══ TÊTE ═══ -->
+  <ellipse cx="256" cy="138" rx="30" ry="27" fill="white"/>
+  <!-- Yeux -->
+  <circle cx="242" cy="132" r="8" fill="#1E6B2E"/>
+  <circle cx="270" cy="132" r="8" fill="#1E6B2E"/>
+  <!-- Reflet yeux -->
+  <circle cx="244" cy="130" r="3" fill="white" opacity="0.6"/>
+  <circle cx="272" cy="130" r="3" fill="white" opacity="0.6"/>
+
+  <!-- ═══ ANTENNES ═══ -->
+  <path d="M 242,113 Q 215,85 198,58" stroke="white" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <path d="M 270,113 Q 297,85 314,58" stroke="white" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <!-- Poils antennes -->
+  <path d="M 220,94 L 208,82" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M 210,76 L 200,66" stroke="white" stroke-width="2" stroke-linecap="round"/>
+  <path d="M 292,94 L 304,82" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M 302,76 L 312,66" stroke="white" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- ═══ PROBOSCIS (rostre, long dard) ═══ -->
+  <path d="M 256,111 Q 257,82 258,48" stroke="white" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <!-- Pointe du dard -->
+  <circle cx="258" cy="47" r="4" fill="white"/>
+
 </svg>
