@@ -1,4 +1,9 @@
-export default function BottomNav({ activeTab, onTabChange, onReport, onReportBlocked, user, isNearGPS }) {
+function truncatePseudo(pseudo) {
+  if (!pseudo) return 'Profil'
+  return pseudo.length > 12 ? pseudo.slice(0, 12) + '...' : pseudo
+}
+
+export default function BottomNav({ activeTab, onTabChange, onReport, onReportBlocked, user, isNearGPS, pseudo }) {
   return (
     <nav className="bottom-nav">
       <button
@@ -21,7 +26,7 @@ export default function BottomNav({ activeTab, onTabChange, onReport, onReportBl
         onClick={() => onTabChange('profil')}
       >
         <span className="nav-icon">{user ? '👤' : '🔑'}</span>
-        <span className="nav-label">{user ? 'Profil' : 'Connexion'}</span>
+        <span className="nav-label">{user ? truncatePseudo(pseudo) : 'Connexion'}</span>
       </button>
 
       <button

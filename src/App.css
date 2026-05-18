@@ -718,6 +718,138 @@
   background: #fef2f2;
 }
 
+/* ─── Profile — deux colonnes ─────────────────────────── */
+
+.profile-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  align-items: start;
+}
+
+@media (max-width: 600px) {
+  .profile-columns {
+    grid-template-columns: 1fr;
+  }
+}
+
+.profile-col {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Badge actuel */
+.prof-badge-card {
+  border-radius: 16px;
+  border: 2px solid;
+  padding: 18px 16px 14px;
+  text-align: center;
+}
+
+.prof-badge-emoji {
+  font-size: 40px;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.prof-badge-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.prof-badge-congrats {
+  font-size: 12px;
+  color: #374151;
+  line-height: 1.55;
+  margin-bottom: 12px;
+}
+
+.prof-progress-wrap { }
+
+.prof-progress-track {
+  height: 6px;
+  background: rgba(0,0,0,0.1);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+
+.prof-progress-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.6s ease;
+}
+
+.prof-progress-label {
+  font-size: 11px;
+  color: #6b7280;
+}
+
+/* Titre de section */
+.prof-section-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #111827;
+}
+
+/* Grille de stats */
+.prof-stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.prof-stat-card {
+  background: #F1F8E9;
+  border-radius: 12px;
+  padding: 12px 10px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+
+.prof-stat-icon { font-size: 18px; line-height: 1; }
+.prof-stat-value { font-size: 18px; font-weight: 800; color: #111827; line-height: 1.2; }
+.prof-stat-label { font-size: 10px; color: #6b7280; text-align: center; }
+
+/* Cartes d'astuces */
+.tip-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 14px 14px 10px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+}
+
+.tip-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.tip-icon { font-size: 20px; }
+.tip-title { }
+
+.tip-list {
+  padding-left: 16px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tip-item {
+  font-size: 12px;
+  color: #374151;
+  line-height: 1.5;
+}
+
 /* ─── Privacy / full page overlay ────────────────────── */
 
 .fullpage-overlay {

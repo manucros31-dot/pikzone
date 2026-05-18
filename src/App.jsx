@@ -46,6 +46,8 @@ export default function App() {
   const [showLockedToast, setShowLockedToast] = useState(false)
   const recenterRef = useRef(null)
   const lockedToastTimer = useRef(null)
+  const sessionIdRef = useRef(null)
+  const sessionStartRef = useRef(null)
 
   const position = useGeolocation()
   const { user, loading } = useAuth()
@@ -69,6 +71,35 @@ export default function App() {
   function handleRecenter() {
     recenterRef.current?.()
   }
+
+  // ─── Suivi de session ──────────────────────────────────────────────────────
+  useEffect(() => {
+    if (!user) return
+    sessionStartRef.current = Date.now()
+
+    supabase.from('sessions')
+      .insert({ user_id: user.id, started_at: new Date().toISOString() })
+      .select('id').single()
+      .then(({ data }) => { if (data) sessionIdRef.current = data.id })
+
+    function endSession() {
+      if (!sessionIdRef.current) return
+      const minutes = Math.max(1, Math.round((Date.now() - sessionStartRef.current) / 60000))
+      navigator.sendBeacon
+        ? navigator.sendBeacon('/api/noop') // fallback silencieux
+        : null
+      supabase.from('sessions').update({
+        ended_at: new Date().toISOString(),
+        duration_minutes: minutes,
+      }).eq('id', sessionIdRef.current)
+    }
+
+    window.addEventListener('beforeunload', endSession)
+    return () => {
+      window.removeEventListener('beforeunload', endSession)
+      endSession()
+    }
+  }, [user?.id])
 
   useEffect(() => { fetchReports(); fetchOfficialEvents() }, [])
   useEffect(() => {
@@ -315,6 +346,7 @@ export default function App() {
         onReportBlocked={handleReportBlocked}
         user={user}
         isNearGPS={isNearGPS}
+        pseudo={profile?.pseudo}
       />
       <InstallBanner />
     </div>
