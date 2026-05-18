@@ -1458,3 +1458,18 @@
   font-size: 14px;
   box-shadow: 0 1px 6px rgba(0,0,0,0.2);
 }
+
+/* ─── Attribution Leaflet discrète ────────────────────── */
+
+.leaflet-control-attribution {
+  background: transparent !important;
+  box-shadow: none !important;
+  font-size: 10px !important;
+  color: #9ca3af !important;
+  padding: 0 4px 2px !important;
+}
+
+.leaflet-control-attribution a {
+  color: #9ca3af !important;
+  text-decoration: none !important;
+}

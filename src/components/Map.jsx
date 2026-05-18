@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from 'react'
-import { MapContainer, TileLayer, Circle, Marker, Popup, useMap } from 'react-leaflet'
+import { MapContainer, TileLayer, Circle, Marker, Popup, useMap, AttributionControl } from 'react-leaflet'
 import L from 'leaflet'
 import { NIVEAU_SCORE, haversineM, scoreToColor, scoreToLabel } from '../lib/geo'
 import { EVENT_TYPES, isActiveEvent } from '../lib/officialData'
@@ -86,10 +86,13 @@ export default function Map({ reports, position, planResult, officialEvents = []
       zoom={6}
       className="map-container"
       zoomControl={false}
+      attributionControl={false}
     >
+      <AttributionControl prefix={false} />
       <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        attribution='© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        maxZoom={19}
       />
 
       {/* Cercle de repère plan (100m diamètre, même style que les signalements) */}
