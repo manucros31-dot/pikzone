@@ -42,11 +42,9 @@ export default function App() {
   const [isAdmin, setIsAdmin]               = useState(
     () => window.location.pathname === '/admin'
   )
-  const [mapCenter, setMapCenter]           = useState(null)
-  const [showLockedToast, setShowLockedToast] = useState(false)
+  const [mapCenter, setMapCenter]           = useState({ lat: 46.2276, lng: 2.2137 })
   const [profileLoading, setProfileLoading] = useState(false)
   const recenterRef = useRef(null)
-  const lockedToastTimer = useRef(null)
   const sessionIdRef = useRef(null)
   const sessionStartRef = useRef(null)
 
@@ -62,12 +60,6 @@ export default function App() {
   const handleMapCenterChange = useCallback((center) => {
     setMapCenter(center)
   }, [])
-
-  function handleReportBlocked() {
-    if (lockedToastTimer.current) clearTimeout(lockedToastTimer.current)
-    setShowLockedToast(true)
-    lockedToastTimer.current = setTimeout(() => setShowLockedToast(false), 3500)
-  }
 
   function handleRecenter() {
     recenterRef.current?.()
@@ -160,9 +152,16 @@ export default function App() {
     }
   }
 
-  async function handleReport(niveau) {
-    if (!position) return
-    const insertData = { user_id: getUserId(), latitude: position.lat, longitude: position.lng, niveau }
+  async function handleReport({ niveau, lat, lng, date_signalement, periode, mode_signalement }) {
+    const insertData = {
+      user_id: getUserId(),
+      latitude: lat,
+      longitude: lng,
+      niveau,
+      date_signalement,
+      periode,
+      mode_signalement,
+    }
     if (user) insertData.auth_user_id = user.id
     const { error } = await supabase.from('signalements').insert(insertData)
     if (error) throw new Error(error.message)
@@ -316,7 +315,14 @@ export default function App() {
       {showPlan && <PlanModal onClose={() => setShowPlan(false)} onConfirm={handlePlanConfirm} />}
 
       {showModal && (
-        <ReportModal onSubmit={handleReport} onClose={() => setShowModal(false)} hasPosition={!!position} />
+        <ReportModal
+          onSubmit={handleReport}
+          onClose={() => setShowModal(false)}
+          hasPosition={!!position}
+          isNearGPS={isNearGPS}
+          position={position}
+          mapCenter={mapCenter}
+        />
       )}
 
       {showAuth && <AuthModal initialMode={showAuth} onClose={() => setShowAuth(null)} />}
@@ -341,18 +347,10 @@ export default function App() {
         </div>
       )}
 
-      {showLockedToast && (
-        <div className="locked-toast">
-          📍 Vous ne pouvez signaler que votre position actuelle.<br />
-          Revenez à votre position pour signaler.
-        </div>
-      )}
-
       <BottomNav
         activeTab={activeTab}
         onTabChange={handleTabChange}
         onReport={() => setShowModal(true)}
-        onReportBlocked={handleReportBlocked}
         user={user}
         isNearGPS={isNearGPS}
         pseudo={profile?.pseudo}

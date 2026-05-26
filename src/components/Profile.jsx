@@ -172,12 +172,31 @@ export default function Profile({ user, profile, reportCount, profileLoading, on
         }
       }
 
+      // 6. Répartition période et mode
+      const { data: periodeData } = await supabase
+        .from('signalements')
+        .select('periode, mode_signalement')
+        .eq('auth_user_id', user.id)
+        .not('periode', 'is', null)
+
+      const periodeCounts = { matin: 0, aprem: 0, soir: 0 }
+      let distantCount = 0
+      let directCount = 0
+      for (const r of (periodeData ?? [])) {
+        if (r.periode in periodeCounts) periodeCounts[r.periode]++
+        if (r.mode_signalement === 'distant') distantCount++
+        else if (r.mode_signalement === 'direct') directCount++
+      }
+
       setStats({
         firstReport:   firstData?.[0]?.created_at ?? null,
         totalMinutes,
         distinctZones: countDistinctZones(allReports ?? []),
         monthCount:    monthCount ?? 0,
         ranking,
+        periodeCounts,
+        distantCount,
+        directCount,
       })
     } catch (err) {
       console.error('fetchStats error', err)
@@ -268,6 +287,27 @@ export default function Profile({ user, profile, reportCount, profileLoading, on
               </div>
             ))}
           </div>
+
+          {stats && (stats.periodeCounts.matin + stats.periodeCounts.aprem + stats.periodeCounts.soir > 0 || stats.directCount + stats.distantCount > 0) && (
+            <>
+              <h3 className="prof-section-title">Mes habitudes</h3>
+              <div className="prof-stats-grid">
+                {[
+                  { icon: '🌅', value: stats.periodeCounts.matin, label: 'matin' },
+                  { icon: '☀️', value: stats.periodeCounts.aprem, label: 'après-midi' },
+                  { icon: '🌙', value: stats.periodeCounts.soir,  label: 'soir' },
+                  { icon: '🎯', value: stats.directCount,         label: 'sur place' },
+                  { icon: '📍', value: stats.distantCount,        label: 'distants' },
+                ].map(({ icon, value, label }) => (
+                  <div key={label} className="prof-stat-card">
+                    <span className="prof-stat-icon">{icon}</span>
+                    <span className="prof-stat-value">{value}</span>
+                    <span className="prof-stat-label">{label}</span>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
         </div>
 
         {/* ── COLONNE DROITE : astuces ── */}

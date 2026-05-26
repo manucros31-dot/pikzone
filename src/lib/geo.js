@@ -31,6 +31,13 @@ export function scoreToLabel(score) {
   return 'Aucun'
 }
 
+export function getPeriode() {
+  const h = new Date().getHours()
+  if (h >= 5 && h < 13) return 'matin'
+  if (h >= 13 && h < 18) return 'aprem'
+  return 'soir'
+}
+
 export function scoreToColor(score) {
   const stops = [
     { s: 0, rgb: [59,  109, 17]  },

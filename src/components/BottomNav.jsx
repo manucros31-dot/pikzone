@@ -3,7 +3,7 @@ function truncatePseudo(pseudo) {
   return pseudo.length > 12 ? pseudo.slice(0, 12) + '...' : pseudo
 }
 
-export default function BottomNav({ activeTab, onTabChange, onReport, onReportBlocked, user, isNearGPS, pseudo }) {
+export default function BottomNav({ activeTab, onTabChange, onReport, user, isNearGPS, pseudo }) {
   return (
     <nav className="bottom-nav">
       <button
@@ -14,12 +14,16 @@ export default function BottomNav({ activeTab, onTabChange, onReport, onReportBl
         <span className="nav-label">Carte</span>
       </button>
 
-      <button
-        className={`nav-report-btn ${!isNearGPS ? 'locked' : ''}`}
-        onClick={isNearGPS ? onReport : onReportBlocked}
-      >
-        <span className="nav-report-icon">{isNearGPS ? '🦟' : '🔒'}</span>
-      </button>
+      <div className="nav-report-wrap">
+        <button
+          className={`nav-report-btn ${isNearGPS ? '' : 'distant'}`}
+          onClick={onReport}
+        >
+          <span className="nav-report-icon">🦟</span>
+          {!isNearGPS && <span className="nav-report-badge">📍</span>}
+        </button>
+        <span className="nav-report-label">{isNearGPS ? 'Signaler' : 'Signaler ici'}</span>
+      </div>
 
       <button
         className={`nav-item ${activeTab === 'profil' ? 'active' : ''}`}

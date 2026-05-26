@@ -13,6 +13,8 @@ const OPACITY_BY_SCORE = (score) => {
 
 // ─── Clustering spatial (rayon 50 m) ─────────────────────────────────────────
 
+const PERIODE_LABEL = { matin: '🌅 Matin', aprem: '☀️ Après-midi', soir: '🌙 Soir' }
+
 function clusterReports(reports) {
   const clusters = []
   for (const report of reports) {
@@ -30,7 +32,8 @@ function clusterReports(reports) {
   }
   return clusters.map((c) => {
     const avgScore = c.reports.reduce((s, r) => s + (NIVEAU_SCORE[r.niveau] ?? 0), 0) / c.reports.length
-    return { ...c, avgScore, color: scoreToColor(avgScore), opacity: OPACITY_BY_SCORE(avgScore) }
+    const isDistant = c.reports.every(r => r.mode_signalement === 'distant')
+    return { ...c, avgScore, color: scoreToColor(avgScore), opacity: OPACITY_BY_SCORE(avgScore), isDistant }
   })
 }
 
@@ -154,28 +157,39 @@ export default function Map({ reports, position, planResult, officialEvents = []
       )}
 
       {/* Signalements (filtrés ou tous) */}
-      {clusters.map((cluster, i) => (
-        <Circle
-          key={i}
-          center={[cluster.lat, cluster.lng]}
-          radius={50}
-          pathOptions={{
-            color:       cluster.color,
-            fillColor:   cluster.color,
-            fillOpacity: cluster.opacity,
-            weight:      1.5,
-          }}
-        >
-          <Popup>
-            <strong>{scoreToLabel(cluster.avgScore)}</strong>
-            {cluster.reports.length > 1 && (
-              <><br /><small>{cluster.reports.length} signalements</small></>
-            )}
-            <br />
-            <small>{new Date(cluster.reports[0].created_at).toLocaleDateString('fr-FR')}</small>
-          </Popup>
-        </Circle>
-      ))}
+      {clusters.map((cluster, i) => {
+        const r0 = cluster.reports[0]
+        const dateStr = r0.date_signalement
+          ? new Date(r0.date_signalement + 'T00:00:00').toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })
+          : new Date(r0.created_at).toLocaleDateString('fr-FR')
+        return (
+          <Circle
+            key={i}
+            center={[cluster.lat, cluster.lng]}
+            radius={50}
+            pathOptions={{
+              color:       cluster.color,
+              fillColor:   cluster.color,
+              fillOpacity: cluster.opacity,
+              weight:      cluster.isDistant ? 1.5 : 1.5,
+              dashArray:   cluster.isDistant ? '5,4' : undefined,
+            }}
+          >
+            <Popup>
+              <strong>{scoreToLabel(cluster.avgScore)}</strong>
+              {cluster.reports.length > 1 && (
+                <><br /><small>{cluster.reports.length} signalements</small></>
+              )}
+              <br />
+              <small>📅 {dateStr}</small>
+              {r0.periode && <><br /><small>{PERIODE_LABEL[r0.periode] ?? r0.periode}</small></>}
+              {r0.mode_signalement && (
+                <><br /><small>{r0.mode_signalement === 'distant' ? '📍 Distant' : '🎯 Sur place'}</small></>
+              )}
+            </Popup>
+          </Circle>
+        )
+      })}
 
       {/* ── Données officielles ── */}
       {activeOfficial.map((ev) => {

@@ -7,7 +7,19 @@ create table if not exists signalements (
   latitude float not null,
   longitude float not null,
   niveau text not null check (niveau in ('infeste', 'beaucoup', 'peu', 'aucun')),
+  date_signalement date,
+  periode varchar(10) check (periode in ('matin', 'aprem', 'soir')),
+  mode_signalement varchar(10) check (mode_signalement in ('direct', 'distant')),
   created_at timestamp with time zone default now()
+);
+
+-- Sessions (suivi durée d'utilisation)
+create table if not exists sessions (
+  id uuid default gen_random_uuid() primary key,
+  user_id uuid references auth.users(id) on delete cascade,
+  started_at timestamp with time zone default now(),
+  ended_at timestamp with time zone,
+  duration_minutes integer
 );
 
 alter table signalements enable row level security;
