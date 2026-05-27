@@ -229,16 +229,32 @@ export default function App() {
       <AlertBanner officialEvents={officialEvents} />
 
       {activeTab === 'carte' && (
-        <Map
-          reports={visibleReports}
-          position={position}
-          planResult={planResult}
-          officialEvents={officialEvents}
-          showOfficial={showOfficial}
-          mosquitoAlertData={mosquitoAlertData}
-          onCenterChange={handleMapCenterChange}
-          recenterRef={recenterRef}
-        />
+        <div className="map-wrapper">
+          <Map
+            reports={visibleReports}
+            position={position}
+            planResult={planResult}
+            officialEvents={officialEvents}
+            showOfficial={showOfficial}
+            mosquitoAlertData={mosquitoAlertData}
+            onCenterChange={handleMapCenterChange}
+            recenterRef={recenterRef}
+          />
+          {!isNearGPS && (
+            <>
+              <div className="dart-info-banner">
+                📍 Pointez la zone à signaler puis appuyez sur 🦟 Signaler ici
+              </div>
+              <div className="dart-indicator" aria-hidden="true">
+                <svg width="20" height="40" viewBox="0 0 20 40" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="10" cy="8" r="8" fill="#BA7517" opacity="0.9"/>
+                  <polygon points="6,8 14,8 10,38" fill="#BA7517" opacity="0.9"/>
+                  <text x="10" y="12" textAnchor="middle" fontSize="10">🦟</text>
+                </svg>
+              </div>
+            </>
+          )}
+        </div>
       )}
       {activeTab === 'badges' && (
         <Badges reportCount={userReportCount} user={user} onSignup={() => setShowAuth('register')} />
@@ -269,7 +285,7 @@ export default function App() {
       {/* ── Toggle données officielles ── */}
       {activeTab === 'carte' && (
         <button
-          className={`official-toggle ${showOfficial ? 'official-toggle-on' : ''}`}
+          className={`official-toggle ${maLoading ? 'official-toggle-loading' : showOfficial ? 'official-toggle-on' : ''}`}
           onClick={() => {
             const next = !showOfficial
             setShowOfficial(next)
